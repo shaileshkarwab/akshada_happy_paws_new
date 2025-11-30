@@ -1,0 +1,6 @@
+@Akshada.API_HostAddress = http://localhost:5047
+
+GET {{Akshada.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
