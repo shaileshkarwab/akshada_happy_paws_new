@@ -8,7 +8,7 @@ namespace Akshada.DTO.Models
 {
     public class DTO_CompanyInformation
     {
-
+        const string folderName = "profile_images";
         public string? RowId { get; set; } = null!;
 
         public string CompanyName { get; set; } = null!;
@@ -30,6 +30,22 @@ namespace Akshada.DTO.Models
         public string? Website { get; set; }
 
         public string Logo { get; set; }
+
+        public string LogoPath
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(Logo))
+                {
+                    string returnValue = $"{DTO_Configuration.DataUploadPath}{folderName}/{Logo}";
+                    return returnValue;
+                }
+                else
+                {
+                    return DTO_Configuration.NoImagePath;
+                }
+            }
+        }
 
         public List<DTO_CompanyInformationBankAccount> CompanyInformationBankAccounts { get; set; }
 

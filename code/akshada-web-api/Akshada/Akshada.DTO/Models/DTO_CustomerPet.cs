@@ -8,7 +8,7 @@ namespace Akshada.DTO.Models
 {
     public class DTO_CustomerPet
     {
-
+        const string folderName = "client-pet-images";
         public string? RowId { get; set; } = null!;
 
         public string? PetName { get; set; }
@@ -36,5 +36,36 @@ namespace Akshada.DTO.Models
         public bool IsDataComplete { get; set; }
 
         public DTO_LookUp? NatureOfPetSystem { get; set; }
+
+        public string? PetAndOwnerImageFullPath
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(PetAndOwnerImage))
+                {
+                    return $"{DTO_Configuration.DataUploadPath}{folderName}/{PetAndOwnerImage}";
+                }
+                else
+                {
+                    return DTO_Configuration.NoImagePath;
+                }
+            }
+
+        }
+
+        public string? PetVaccinationImageFullPath
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(PetVaccinationImage))
+                {
+                    return $"{DTO_Configuration.DataUploadPath}{folderName}/{PetVaccinationImage}";
+                }
+                else
+                {
+                    return DTO_Configuration.NoImagePath;
+                }
+            }
+        }
     }
 }

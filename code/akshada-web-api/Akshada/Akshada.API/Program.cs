@@ -2,6 +2,7 @@
 
 //Scaffold-DbContext "server=localhost;user id=root;password=Admin@1234#;database=akshada_paws" Pomelo.EntityFrameworkCore.MySql -o DbModels -f
 
+using Akshada.API.CommonConfiguration;
 using Akshada.API.Convertors;
 using Akshada.API.CustomExceptionMiddleware;
 using Akshada.API.Migrations;
@@ -159,7 +160,7 @@ app.UseStaticFiles(new StaticFileOptions()
     RequestPath = new PathString("/uploaddata")
 });
 app.UseMiddleware<ExceptionMiddleware>();
-
+app.SetCommonConfiguration();
 
 EnsureRequiredFolders(app);
 

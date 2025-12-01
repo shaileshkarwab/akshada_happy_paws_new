@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace Akshada.DTO.Models
 {
-    public class DTO_Customer: DTO_CustomerList
+    public class DTO_Customer : DTO_CustomerList
     {
 
-        public List<DTO_CustomerPet> CustomerPets { get; set; } 
+        public List<DTO_CustomerPet> CustomerPets { get; set; }
 
     }
 
     public class DTO_CustomerList
     {
-
+        const string folderName = "customer";
         public string? RowId { get; set; } = null!;
 
         public string CustomerName { get; set; } = null!;
@@ -38,6 +38,21 @@ namespace Akshada.DTO.Models
         public string? GoogleFormSubmissionJsonData { get; set; }
 
         public string? GoogleFormRowId { get; set; }
+
+        public string? AddressProofImageFullPath
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(AddressProofImage))
+                {
+                    return $"{DTO_Configuration.DataUploadPath}{folderName}/{AddressProofImage}";
+                }
+                else
+                {
+                    return DTO_Configuration.NoImagePath;
+                }
+            }
+        }
 
     }
 }
