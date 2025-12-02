@@ -133,7 +133,7 @@ left outer join
 select 
 c.row_id as customer_id, 
 d.row_id as pet_id, 
-max(due_date) as VaccinationDueDate, datediff(max(due_date),@fromDate) as VaccinationPendingDays  
+min(due_date) as VaccinationDueDate, datediff(min(due_date),@fromDate) as VaccinationPendingDays  
 from vaccination_record a, vaccination_record_detail b, customer c, customer_pets d
 where a.id = b.vaccination_record_master_id
 and c.id = a.customer_id
