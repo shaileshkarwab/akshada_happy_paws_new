@@ -7,6 +7,7 @@ using Akshada.DTO.Models;
 using QRCoder;
 using System.Drawing;
 using System.Drawing.Imaging;
+using Akshada.Services.Services;
 
 namespace Akshada.API.Controllers
 {
@@ -15,6 +16,7 @@ namespace Akshada.API.Controllers
     public class WeatherForecastController : ControllerBase
     {
         private readonly ISrvRequestService srvRequestService;
+        private readonly GoogleMapService _mapService;
 
         private static readonly string[] Summaries = new[]
         {
@@ -24,12 +26,13 @@ namespace Akshada.API.Controllers
         private readonly ILogger<WeatherForecastController> _logger;
         private readonly ITemplateService<DTO_WalkingServiceRequest> _templateService;
         private readonly ICompanyInformationService companyInformationService;
-        public WeatherForecastController(ICompanyInformationService companyInformationService,ILogger<WeatherForecastController> logger, ISrvRequestService srvRequestService, ITemplateService<DTO_WalkingServiceRequest> templateService)
+        public WeatherForecastController(GoogleMapService mapService,ICompanyInformationService companyInformationService,ILogger<WeatherForecastController> logger, ISrvRequestService srvRequestService, ITemplateService<DTO_WalkingServiceRequest> templateService)
         {
             _logger = logger;
             this.srvRequestService = srvRequestService;
             this._templateService = templateService;
             this.companyInformationService = companyInformationService;
+            _mapService = mapService;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
@@ -148,6 +151,18 @@ namespace Akshada.API.Controllers
             using MemoryStream ms = new MemoryStream();
             qrBitmap.Save(ms, ImageFormat.Png);
             return File(ms.ToArray(), "image/png");    // API returns QR image
+        }
+
+
+        [HttpGet("thumbnail")]
+        public async Task<IActionResult> GetThumbnail([FromQuery]double lat, [FromQuery] double lng)
+        {
+            var image = await _mapService.GenerateThumbnail(lat, lng);
+
+            return Ok(new
+            {
+                ThumbnailUrl = $"{Request.Scheme}://{Request.Host}/thumbnails/{Path.GetFileName(image)}"
+            });
         }
     }
 }

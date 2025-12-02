@@ -35,6 +35,8 @@ public partial class WalkingServiceRequest
 
     public decimal SpecialDayRate { get; set; }
 
+    public bool IsChargedMonthly { get; set; }
+
     public virtual UserMaster CreatedByNavigation { get; set; } = null!;
 
     public virtual Customer Customer { get; set; } = null!;

@@ -52,7 +52,7 @@ namespace Akshada.Repository
             GoogleFormSubmissionRepository = new GoogleFormSubmissionRepository(akshadaPawsContext, configuration, services);
             CompanyInformationUPIRepository = new CompanyInformationUPIRepository(akshadaPawsContext, configuration, services);
             CompanyInformationBankAccountRepository = new CompanyInformationBankAccountRepository(akshadaPawsContext, configuration, services);
-
+            ServiceRateDetailRepository = new ServiceRateDetailRepository(akshadaPawsContext, configuration, services);
         }
         public IUserRepository UserRepository { get; private set; }
         public IMenuMasterRepository MenuMasterRepository { get; private set; }
@@ -112,6 +112,8 @@ namespace Akshada.Repository
 
         public CompanyInformationUPIRepository CompanyInformationUPIRepository { get; private set; }
         public CompanyInformationBankAccountRepository CompanyInformationBankAccountRepository { get; private set; }
+
+        public ServiceRateDetailRepository ServiceRateDetailRepository { get; private set; }
         public int Complete()
         {
             return this.akshadaPawsContext.SaveChanges();

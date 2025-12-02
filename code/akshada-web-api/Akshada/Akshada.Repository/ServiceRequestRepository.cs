@@ -225,6 +225,7 @@ namespace Akshada.Repository
                 dbServiceRequest.IsActive = updateEntity.IsActive;
                 dbServiceRequest.RegularDayRate = updateEntity.RegularDayRate;
                 dbServiceRequest.SpecialDayRate = updateEntity.SpecialDayRate;
+                dbServiceRequest.IsChargedMonthly = updateEntity.IsChargedMonthly;
 
                 foreach (var walkingServiceRequestDay in updateEntity.WalkingServiceRequestDays)
                 {

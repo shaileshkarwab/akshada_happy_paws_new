@@ -1353,7 +1353,7 @@ public partial class AkshadaPawsContext : DbContext
 
             entity.HasIndex(e => e.RowId, "IX_service_rate_master_row_id").IsUnique();
 
-            entity.HasIndex(e => new { e.ServiceSystemId, e.EffectiveDate }, "UK_SRM_EFF_DATE_SERVICE_ID").IsUnique();
+            entity.HasIndex(e => new { e.ServiceSystemId, e.EffectiveDate, e.IsChargedMonthly }, "UK_SRM_EFF_DATE_SERVICE_ID").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreatedAt)
@@ -1363,6 +1363,7 @@ public partial class AkshadaPawsContext : DbContext
             entity.Property(e => e.EffectiveDate).HasColumnName("effective_date");
             entity.Property(e => e.EntryDate).HasColumnName("entry_date");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.IsChargedMonthly).HasColumnName("is_charged_monthly");
             entity.Property(e => e.RowId)
                 .HasColumnName("row_id")
                 .UseCollation("utf8mb3_general_ci")
@@ -1875,6 +1876,7 @@ public partial class AkshadaPawsContext : DbContext
                 .IsRequired()
                 .HasDefaultValueSql("'1'")
                 .HasColumnName("is_active");
+            entity.Property(e => e.IsChargedMonthly).HasColumnName("is_charged_monthly");
             entity.Property(e => e.PetId).HasColumnName("pet_id");
             entity.Property(e => e.RegularDayRate)
                 .HasPrecision(19, 5)

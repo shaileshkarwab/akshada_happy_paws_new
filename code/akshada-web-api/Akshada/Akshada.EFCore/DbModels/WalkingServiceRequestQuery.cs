@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace Akshada.EFCore.DbModels
 {
     public class WalkingServiceRequestQuery
@@ -12,6 +11,8 @@ namespace Akshada.EFCore.DbModels
         public string DayName { get; set; }
         public string WalkingRequestID { get; set; }
         public string CustomerName { get; set; }
+
+        public bool CustomerIsActive { get; set; }
         public string CustomerRowId { get; set; }
         public string PetName { get; set; }
         public string PetId { get; set; }
@@ -55,6 +56,8 @@ namespace Akshada.EFCore.DbModels
         public DateTime? VaccinationDueDate { get; set; }
         public int? VaccinationPendingDays { get; set; }
         public string? PetAndOwnerImage { get; set; }
+
+        public string? NewUserAssignToWalkingServiceRowId { get; set; }
         //public  DTO_UserMaster SelectedUser => new DTO_UserMaster
         //{
         //    FirstName = UserFirstName,

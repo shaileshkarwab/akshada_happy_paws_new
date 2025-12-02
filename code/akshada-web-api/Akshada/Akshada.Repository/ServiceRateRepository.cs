@@ -27,7 +27,7 @@ namespace Akshada.Repository
                                     RowId = srm.RowId,
                                     EffectiveDate = srm.EffectiveDate,
                                     EntryDate = srm.EntryDate,
-                                    IsActive = srm.IsActive ? "Active" : "Blocked",
+                                    IsActive = srm.IsActive,
                                     ServiceName = srm.ServiceSystem.ParamValue
                                 }
                                 ).OrderBy(c => c.ServiceName).ThenBy(c => c.EffectiveDate).ToList();

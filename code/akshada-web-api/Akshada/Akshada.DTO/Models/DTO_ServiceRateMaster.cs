@@ -19,6 +19,8 @@ namespace Akshada.DTO.Models
         public DTO_SystemParameter ServiceSystem { get; set; }
 
         public List<DTO_ServiceRateMasterDetail> ServiceRateMasterDetails { get; set; }
+
+        public bool IsChargedMonthly { get; set; }
     }
 
     public class DTO_ServiceRateMasterDetail

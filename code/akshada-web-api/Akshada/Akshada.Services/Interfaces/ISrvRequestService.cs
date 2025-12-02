@@ -16,7 +16,7 @@ namespace Akshada.Services.Interfaces
 
         bool UpdateCustomerPetWalkingServiceRequest(string customerRowId, string petRowId, string serviceRequestId, DTO_WalkingServiceRequest updateEntity);
 
-        PagedList<WalkingServiceRequestQuery> GetPetServiceDetails(DTO_FilterAndPaging filterAndPagings);
+        PagedList<DTO_WalkingServiceRequestQuery> GetPetServiceDetails(DTO_FilterAndPaging filterAndPagings);
 
         PagedList<DTO_WalingServiceList> GetWalkingServiceRequests(DTO_FilterAndPaging filterAndPagings);
 

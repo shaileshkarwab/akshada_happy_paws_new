@@ -15,7 +15,48 @@ namespace Akshada.EFCore.RawSQL
     FROM date_series
     WHERE dt < DATE(@toDate)
 )
-select a.*, b.row_id WalkingServiceRecordId, c.VaccinationDueDate, c.VaccinationPendingDays from
+select 
+a.ServiceDate,
+a.DayName,
+a.WalkingRequestID,
+a.RequestDayId,
+a.ScheduleRowId,
+a.ScheduleId,
+a.walking_request_master_id,
+a.walking_request_day_master_id,
+a.walking_request_schedule_master_id,
+ifnull(d.change_from_time, FromTime) as FromTime,
+ifnull(d.change_to_time, ToTime) as ToTime,
+a.CustomerName,
+a.customer_id,
+a.CustomerIsActive,
+a.CustomerRowId,
+a.PetName,
+a.PetAndOwnerImage,
+a.PetId,
+a.Breed,
+a.Colour,
+a.AreaLocationName,
+a.AreaLocationRowId,
+a.Address,
+a.Mobile,
+a.Email,
+a.WeekDayName,
+a.FromDate,
+a.ToDate,
+a.DaysPending,
+ifnull(d.first_name, UserFirstName) as UserFirstName,
+ifnull(d.last_name, UserLastName) as UserLastName,
+ifnull(d.row_id, UserRowId) as UserRowId,
+a.ServiceSystemRowId,
+a.ServiceSystemValue,
+a.FrequencySystemRowId,
+a.FrequencySystemValue,
+b.row_id WalkingServiceRecordId,
+VaccinationDueDate,
+VaccinationPendingDays,
+d.row_id as NewUserAssignToWalkingServiceRowId
+from
 (
 SELECT 
 dt ServiceDate,
@@ -24,13 +65,21 @@ a.row_id as WalkingRequestID,
 g.row_id as RequestDayId,
 h.row_id as ScheduleRowId,
 h.id as ScheduleId,
+
+a.id as walking_request_master_id,
+g.id as walking_request_day_master_id,
+h.id as walking_request_schedule_master_id,
+
 h.from_time as FromTime,
 h.to_time as ToTime,
 b.customer_name  as CustomerName,
+b.id  as customer_id,
+b.is_active  as CustomerIsActive,
 b.row_id as CustomerRowId,
 c.pet_name as PetName,
 c.pet_and_owner_image as PetAndOwnerImage,
 c.row_id as PetId,
+c.id as pet_id,
 d.param_value as Breed,
 e.param_value as Colour,
 f.param_value as AreaLocationName,
@@ -94,6 +143,31 @@ group  by
 customer_id, pet_id
 ) c on c.customer_id = a.CustomerRowId
 and c.pet_id = a.PetId
+left outer join
+(
+SELECT 
+assign_date,
+a.row_id, 
+b.id, 
+b.first_name, 
+b.last_name, 
+a.customer_id, 
+a.pet_id,  
+walking_request_master_id,
+walking_request_day_master_id,
+walking_request_schedule_master_id,
+change_from_time,
+change_to_time
+FROM new_user_assign_to_walking_service a, user_master b
+where a.user_id = b.id
+) d 
+on 1 = 1
+and date(d.assign_date) = date(ServiceDate)
+and d.customer_id = a.customer_id
+and d.pet_id = a.pet_id
+and d.walking_request_master_id = a.walking_request_master_id
+and d.walking_request_day_master_id = a.walking_request_day_master_id
+and d.walking_request_schedule_master_id = a.walking_request_schedule_master_id
 order by ServiceDate";
 
         public const string OtherServiceSQL = @"WITH RECURSIVE date_series AS (

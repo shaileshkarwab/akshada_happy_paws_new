@@ -52,7 +52,8 @@ namespace Akshada.Services.Services
                 EntryDate = serviceRate.EntryDate.ToDateTime(TimeOnly.MinValue).ToString(),
                 IsActive = serviceRate.IsActive,
                 RowId = serviceRate.RowId,
-                ServiceSystem = this.mapper.Map<DTO_SystemParameter>(serviceRate.ServiceSystem)
+                ServiceSystem = this.mapper.Map<DTO_SystemParameter>(serviceRate.ServiceSystem),
+                IsChargedMonthly = serviceRate.IsChargedMonthly
             };
             var serviceRateDetails = (from a in serviceRateLocations
                                       join b in serviceRate.ServiceRateMasterDetails on a.Id equals b.LocationSystemId into bs
@@ -93,6 +94,7 @@ namespace Akshada.Services.Services
                 ServiceSystemId = this.unitOfWork.SystemParamRepository.FindFirst(c => c.RowId == saveEntity.ServiceSystem.RowId).Id,
                 UpdatedAt = DateTime.Now,
                 UpdatedBy = this.UserID,
+                IsChargedMonthly = saveEntity.IsChargedMonthly,
                 ServiceRateMasterDetails = GetServiceRateDetails(saveEntity.ServiceRateMasterDetails)
             };
             this.unitOfWork.ServiceRateRepository.Add(dbSave);
@@ -102,7 +104,7 @@ namespace Akshada.Services.Services
 
         List<ServiceRateMasterDetail> GetServiceRateDetails(List<DTO_ServiceRateMasterDetail> rateDetails) {
             List<ServiceRateMasterDetail> serviceRateMasterDetails = new List<ServiceRateMasterDetail>();
-            foreach(var srv in rateDetails)
+            foreach(var srv in rateDetails.Where(c=>c.RegularRate != null || c.SpecialDayRate != null ))
             {
                 serviceRateMasterDetails.Add(new ServiceRateMasterDetail { 
                     IsActive = srv.IsActive.Value,
@@ -140,6 +142,60 @@ namespace Akshada.Services.Services
         {
             var response = this.unitOfWork.ServiceRateRepository.GetWalkingServiceRate(serviceId, locationId, date);
             return response;
+        }
+
+        public bool UpdateServiceRate(string rowId, DTO_ServiceRateMaster saveEntity)
+        {
+            try
+            {
+                var dbWalkingServiceRate = this.unitOfWork.ServiceRateRepository.FindFirst(c=>c.RowId == rowId);
+                if(dbWalkingServiceRate == null)
+                {
+                    throw new Exception("Failed to get the details for the walking service rate");
+                }
+                UserID = Convert.ToInt32(this.httpContextAccessor.HttpContext.Items["USER_ID"]);
+                dbWalkingServiceRate.UpdatedAt = System.DateTime.Now;
+                dbWalkingServiceRate.UpdatedBy = UserID;
+                dbWalkingServiceRate.ServiceSystemId = this.unitOfWork.SystemParamRepository.FindFirst(c=>c.RowId == saveEntity.ServiceSystem.RowId).Id;
+                dbWalkingServiceRate.EffectiveDate = DateTimeHelper.GetDateOnly(saveEntity.EffectiveDate);
+                dbWalkingServiceRate.EntryDate = DateTimeHelper.GetDateOnly(saveEntity.EntryDate);
+                dbWalkingServiceRate.IsActive = saveEntity.IsActive;
+                dbWalkingServiceRate.IsChargedMonthly = saveEntity.IsChargedMonthly;
+
+                foreach(var rate in saveEntity.ServiceRateMasterDetails)
+                {
+                    var locationId = this.unitOfWork.SystemParamRepository.FindFirst(c => c.RowId == rate.LocationSystem.RowId).Id;
+                    if (!string.IsNullOrEmpty(rate.RowId))
+                    {
+                        var serviceRateDetail = this.unitOfWork.ServiceRateDetailRepository.FindFirst(c => c.RowId == rate.RowId);
+                        serviceRateDetail.LocationSystemId = locationId;
+                        serviceRateDetail.RegularRate = rate.RegularRate.Value;
+                        serviceRateDetail.SpecialDayRate = rate.SpecialDayRate.Value;
+                        serviceRateDetail.IsActive = rate.IsActive.Value;
+                        this.unitOfWork.ServiceRateDetailRepository.Update(serviceRateDetail);
+                    }
+                    else {
+                        dbWalkingServiceRate.ServiceRateMasterDetails.Add(new ServiceRateMasterDetail { 
+                            IsActive = true,
+                            RowId = System.Guid.NewGuid().ToString(),
+                            LocationSystemId = locationId,
+                            RegularRate = rate.RegularRate.Value,
+                            SpecialDayRate = rate.SpecialDayRate.Value,
+                        });
+                    }
+                }
+                this.unitOfWork.ServiceRateRepository.Update(dbWalkingServiceRate);
+                this.unitOfWork.Complete();    
+                return true;
+            }
+            catch(Exception ex)
+            {
+                throw new DTO_SystemException{ 
+                    Message = ex.Message,
+                    SystemException = ex,
+                    StatusCode = (Int32)HttpStatusCode.BadRequest
+                };
+            }
         }
     }
 }

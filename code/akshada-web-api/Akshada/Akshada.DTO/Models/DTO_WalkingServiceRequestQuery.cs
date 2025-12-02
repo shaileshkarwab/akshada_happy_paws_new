@@ -8,10 +8,12 @@ namespace Akshada.DTO.Models
 {
     public class DTO_WalkingServiceRequestQuery
     {
-        public DateTime Date { get; set; }
+        public DateTime ServiceDate { get; set; }
         public string DayName { get; set; }
         public string WalkingRequestID { get; set; }
         public string CustomerName { get; set; }
+
+        public bool CustomerIsActive { get; set; }
         public string CustomerRowId { get; set; }
         public string PetName { get; set; }
         public string PetId { get; set; }
@@ -45,11 +47,33 @@ namespace Akshada.DTO.Models
 
         public string? AreaLocationRowId { get; set; }
 
-        public DTO_User SelectedUser => new DTO_User
+        public string? ServiceSystemRowId { get; set; }
+        public string? ServiceSystemValue { get; set; }
+        public string? FrequencySystemRowId { get; set; }
+        public string? FrequencySystemValue { get; set; }
+
+        public string? WalkingServiceRecordId { get; set; }
+
+        public DateTime? VaccinationDueDate { get; set; }
+        public int? VaccinationPendingDays { get; set; }
+        public string? PetAndOwnerImage { get; set; }
+
+        public string? PetAndOwnerImageFullPath
         {
-            FirstName = UserFirstName,
-            LastName = UserLastName,
-            RowId = UserRowId
-        };
+            get
+            {
+                if (!string.IsNullOrEmpty(PetAndOwnerImage))
+                {
+                    return $"{DTO_Configuration.DataUploadPath}client-pet-images/{PetAndOwnerImage}";
+                }
+                else
+                {
+                    return DTO_Configuration.NoImagePath;
+                };
+
+            }
+        }
+
+        public string? NewUserAssignToWalkingServiceRowId { get; set; }
     }
 }

@@ -82,7 +82,8 @@ namespace Akshada.Services.Services
                     UpdatedBy = userID,
                     UpdatedAt = System.DateTime.Now,
                     RegularDayRate = saveEntity.RegularDayRate,
-                    SpecialDayRate = saveEntity.SpecialDayRate
+                    SpecialDayRate = saveEntity.SpecialDayRate,
+                    IsChargedMonthly = saveEntity.IsChargedMonthly
                 };
                 foreach (var m in saveEntity.WalkingServiceRequestDays.Where(c => c.IsSelected == true).ToList())
                 {
@@ -112,7 +113,8 @@ namespace Akshada.Services.Services
                 throw new DTO_SystemException
                 {
                     StatusCode = (Int32)HttpStatusCode.BadRequest,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    SystemException = ex
                 };
             }
         }
@@ -371,7 +373,7 @@ namespace Akshada.Services.Services
         {
             try
             {
-                var dbAssignWalkingRequest = this.unitOfWork.NewUserAssignToWalkingSrvRepo.FindFirst(c => c.RowId == assignedRequestId);
+                var dbAssignWalkingRequest = this.unitOfWork.NewUserAssignToWalkingSrvRepo.FindFirst(c=>c.RowId == assignedRequestId);
                 if (dbAssignWalkingRequest == null)
                 {
                     throw new Exception("Failed to get the details for the assigned request");
@@ -385,7 +387,8 @@ namespace Akshada.Services.Services
                 throw new DTO_SystemException
                 {
                     StatusCode = (Int32)HttpStatusCode.BadRequest,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    SystemException = ex
                 };
             }
         }
@@ -541,7 +544,7 @@ namespace Akshada.Services.Services
             return new PagedList<DTO_ReciveFormSubmission>(response, pagesList.TotalCount, pagesList.CurrentPage, pagesList.PageSize);
         }
 
-        public PagedList<WalkingServiceRequestQuery> GetPetServiceDetails(DTO_FilterAndPaging filterAndPagings)
+        public PagedList<DTO_WalkingServiceRequestQuery> GetPetServiceDetails(DTO_FilterAndPaging filterAndPagings)
         {
             var queryBasedOnDate = this.unitOfWork.ServiceRequestRepository.GetPetServiceDetails(filterAndPagings);
 
@@ -549,8 +552,9 @@ namespace Akshada.Services.Services
             filterAndPagings.DateFilters= null;
             var query = queryBasedOnDate.ApplyAdvanceFilters(filterAndPagings);
 
-            var response = PagedList<WalkingServiceRequestQuery>.ToPagedList(query,filterAndPagings.PageParameter.PageNumber,filterAndPagings.PageParameter.PageSize);
-            return new PagedList<WalkingServiceRequestQuery>(response, response.TotalCount,response.CurrentPage,response.PageSize);
+            var responsePagedList = PagedList<WalkingServiceRequestQuery>.ToPagedList(query,filterAndPagings.PageParameter.PageNumber,filterAndPagings.PageParameter.PageSize);
+            var response = this.mapper.Map<List<DTO_WalkingServiceRequestQuery>>(responsePagedList);
+            return new PagedList<DTO_WalkingServiceRequestQuery>(response, responsePagedList.TotalCount, responsePagedList.CurrentPage, responsePagedList.PageSize);
             
             
             //var serviceRequest = this.unitOfWork.ServiceRequestRepository.GetPetServiceDetails(searchCriteria);

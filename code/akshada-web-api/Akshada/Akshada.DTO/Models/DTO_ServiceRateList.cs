@@ -14,6 +14,8 @@ namespace Akshada.DTO.Models
 
         public DateOnly EffectiveDate { get; set; }
 
-        public string IsActive { get; set; } = null!;
+        public bool IsActive { get; set; }
+
+        public bool IsChargedMonthly { get; set; }
     }
 }

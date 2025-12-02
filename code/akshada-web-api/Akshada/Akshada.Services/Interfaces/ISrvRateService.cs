@@ -18,5 +18,7 @@ namespace Akshada.Services.Interfaces
         bool DeleteServiceRate(string rowID);
 
         dynamic GetWalkingServiceRate(string serviceId, string locationId, string date);
+
+        bool UpdateServiceRate(string rowId, DTO_ServiceRateMaster saveEntity);
     }
 }

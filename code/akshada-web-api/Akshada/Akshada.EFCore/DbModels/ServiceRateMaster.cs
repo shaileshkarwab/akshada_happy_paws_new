@@ -25,6 +25,8 @@ public partial class ServiceRateMaster
 
     public DateTime UpdatedAt { get; set; }
 
+    public bool IsChargedMonthly { get; set; }
+
     public virtual UserMaster CreatedByNavigation { get; set; } = null!;
 
     public virtual ICollection<ServiceRateMasterDetail> ServiceRateMasterDetails { get; set; } = new List<ServiceRateMasterDetail>();

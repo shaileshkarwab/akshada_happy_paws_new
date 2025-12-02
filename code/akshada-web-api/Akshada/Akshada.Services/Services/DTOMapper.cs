@@ -170,6 +170,7 @@ namespace Akshada.Services.Services
             CreateMap<CompanyInformationBankAccount, DTO_CompanyInformationBankAccount>().ReverseMap();
             CreateMap<CompanyInformationUpiAccount, DTO_CompanyInformationUpiAccount>().ReverseMap();
             CreateMap<AssignOtherServiceRequestUser, DTO_AssignOtherServiceRequestUser>().ReverseMap();
+            CreateMap<DTO_WalkingServiceRequestQuery, WalkingServiceRequestQuery>().ReverseMap();
         }
     }
 }

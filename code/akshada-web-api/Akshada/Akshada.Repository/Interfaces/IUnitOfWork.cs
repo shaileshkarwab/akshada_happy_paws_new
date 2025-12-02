@@ -68,6 +68,8 @@ namespace Akshada.Repository.Interfaces
 
         CompanyInformationUPIRepository CompanyInformationUPIRepository { get; }
         CompanyInformationBankAccountRepository CompanyInformationBankAccountRepository { get; }
+
+        ServiceRateDetailRepository ServiceRateDetailRepository { get; }
         int Complete();
     }
 }

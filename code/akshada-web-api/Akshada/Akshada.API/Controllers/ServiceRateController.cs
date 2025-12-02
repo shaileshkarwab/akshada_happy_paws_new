@@ -50,5 +50,12 @@ namespace Akshada.API.Controllers
             var response = this.srvRateService.GetWalkingServiceRate(serviceId, locationId, date);
             return SuccessResponse(response);
         }
+
+        [HttpPut("save-service-rates/rowId/{rowId}")]
+        public IActionResult UpdateServiceRate([FromRoute]string rowId,  [FromBody] DTO_ServiceRateMaster saveEntity)
+        {
+            var response = this.srvRateService.UpdateServiceRate(rowId,saveEntity);
+            return SuccessResponse(response);
+        }
     }
 }

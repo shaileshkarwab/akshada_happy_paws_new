@@ -31,6 +31,9 @@ namespace Akshada.DTO.Models
 
         public decimal SpecialDayRate { get; set; }
 
+        public bool IsChargedMonthly { get; set; }
+
+
     }
 
     public class DTO_WalkingServiceRequestDay
