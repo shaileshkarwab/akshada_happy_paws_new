@@ -28,6 +28,10 @@ public partial class AkshadaPawsContext : DbContext
 
     public virtual DbSet<CustomerPet> CustomerPets { get; set; }
 
+    public virtual DbSet<EmailTemplateMaster> EmailTemplateMasters { get; set; }
+
+    public virtual DbSet<EmailTemplateMasterScheduleDetail> EmailTemplateMasterScheduleDetails { get; set; }
+
     public virtual DbSet<GoogleFormSubmission> GoogleFormSubmissions { get; set; }
 
     public virtual DbSet<HolidaySchedule> HolidaySchedules { get; set; }
@@ -497,6 +501,98 @@ public partial class AkshadaPawsContext : DbContext
             entity.HasOne(d => d.NatureOfPetSystem).WithMany(p => p.CustomerPetNatureOfPetSystems)
                 .HasForeignKey(d => d.NatureOfPetSystemId)
                 .HasConstraintName("FK_CUST_PET_NATURE_SYS_PARAM_ID");
+        });
+
+        modelBuilder.Entity<EmailTemplateMaster>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("email_template_master");
+
+            entity.HasIndex(e => e.CreatedBy, "FK_ETM_CRT_BY");
+
+            entity.HasIndex(e => e.EmailNotificationSystemId, "FK_ETM_SYS_PARAM_ID");
+
+            entity.HasIndex(e => e.UpdatedBy, "FK_ETM_UPD_BY");
+
+            entity.HasIndex(e => e.RowId, "UK_ETM_ROW_ID").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.EmailEventDate).HasColumnName("email_event_date");
+            entity.Property(e => e.EmailEventName)
+                .HasMaxLength(255)
+                .HasColumnName("email_event_name")
+                .UseCollation("utf8mb3_general_ci")
+                .HasCharSet("utf8mb3");
+            entity.Property(e => e.EmailEventRepeatForEveryYear).HasColumnName("email_event_repeat_for_every_year");
+            entity.Property(e => e.EmailNotificationSystemId).HasColumnName("email_notification_system_id");
+            entity.Property(e => e.EmailSubject)
+                .HasMaxLength(255)
+                .HasColumnName("email_subject")
+                .UseCollation("utf8mb3_general_ci")
+                .HasCharSet("utf8mb3");
+            entity.Property(e => e.HtmlEmailTemplate)
+                .HasColumnName("html_email_template")
+                .UseCollation("utf8mb3_general_ci")
+                .HasCharSet("utf8mb3");
+            entity.Property(e => e.IsActive)
+                .IsRequired()
+                .HasDefaultValueSql("'1'")
+                .HasColumnName("is_active");
+            entity.Property(e => e.RowId)
+                .HasColumnName("row_id")
+                .UseCollation("utf8mb3_general_ci")
+                .HasCharSet("utf8mb3");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_at");
+            entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
+
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.EmailTemplateMasterCreatedByNavigations)
+                .HasForeignKey(d => d.CreatedBy)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ETM_CRT_BY");
+
+            entity.HasOne(d => d.EmailNotificationSystem).WithMany(p => p.EmailTemplateMasters)
+                .HasForeignKey(d => d.EmailNotificationSystemId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ETM_SYS_PARAM_ID");
+
+            entity.HasOne(d => d.UpdatedByNavigation).WithMany(p => p.EmailTemplateMasterUpdatedByNavigations)
+                .HasForeignKey(d => d.UpdatedBy)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ETM_UPD_BY");
+        });
+
+        modelBuilder.Entity<EmailTemplateMasterScheduleDetail>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("email_template_master_schedule_detail");
+
+            entity.HasIndex(e => e.EmailTemplateMasterId, "FK_ETM_ETMSD_ID");
+
+            entity.HasIndex(e => e.RowId, "UK_ETMSD_ROW_ID").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.EmailTemplateMasterId).HasColumnName("email_template_master_id");
+            entity.Property(e => e.ReminderDays).HasColumnName("reminder_days");
+            entity.Property(e => e.RowId)
+                .HasColumnName("row_id")
+                .UseCollation("utf8mb3_general_ci")
+                .HasCharSet("utf8mb3");
+            entity.Property(e => e.TimeForNotification)
+                .HasColumnType("datetime")
+                .HasColumnName("time_for_notification");
+
+            entity.HasOne(d => d.EmailTemplateMaster).WithMany(p => p.EmailTemplateMasterScheduleDetails)
+                .HasForeignKey(d => d.EmailTemplateMasterId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ETM_ETMSD_ID");
         });
 
         modelBuilder.Entity<GoogleFormSubmission>(entity =>

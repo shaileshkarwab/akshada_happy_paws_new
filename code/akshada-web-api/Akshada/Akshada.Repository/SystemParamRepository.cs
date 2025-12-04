@@ -3,6 +3,7 @@ using Akshada.DTO.Models;
 using Akshada.EFCore.DbModels;
 using Akshada.Repository.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,8 +31,8 @@ namespace Akshada.Repository
                 string propertyName = ((MemberExpression)body.Left).Member.Name;
                 object value = Expression.Lambda(body.Right).Compile().DynamicInvoke();
                 string operation = body.NodeType.ToString(); // Equal, GreaterThan, LessThan...
-
-                if (Convert.ToInt32(value) == (Int32)SystemParameterEnum.TypeOfImagesToUploadForServices)
+                bool blnExecuteInsert = ExecuteMethod(value.ToString());
+                if (blnExecuteInsert)
                 {
                     // check for Start of Walk and End of Walk in system parameter
                     var jsonData = _configuration.GetSection("Appsettings:DefaultSystemParamData").Get<List<DTO_SystemParamFromAppSetting>>();
@@ -40,9 +41,10 @@ namespace Akshada.Repository
                         foreach (var d in m.data)
                         {
                             var isDataExisting = this.akshadaPawsContext.SystemParameters.Any(p => p.EnumId == m.enum_id && p.ParamAbbrivation == d.param_abbrivation);
-                            if(!isDataExisting)
+                            if (!isDataExisting)
                             {
-                                this.akshadaPawsContext.SystemParameters.Add(new SystemParameter { 
+                                this.akshadaPawsContext.SystemParameters.Add(new SystemParameter
+                                {
                                     RowId = System.Guid.NewGuid().ToString(),
                                     ParamValue = d.param_value,
                                     EnumId = m.enum_id,
@@ -59,6 +61,12 @@ namespace Akshada.Repository
                 }
             }
             return base.Find(expression);
+        }
+
+        bool ExecuteMethod(string value)
+        {
+            return Convert.ToInt32(value) == (Int32)SystemParameterEnum.TypeOfImagesToUploadForServices ||
+                    Convert.ToInt32(value) == (Int32)SystemParameterEnum.MessageTemplateVariables;
         }
     }
 }

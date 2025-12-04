@@ -262,5 +262,35 @@ namespace Akshada.Services.Services
             var customerList = this.mapper.Map<List<DTO_Customer>>(pagedList);
             return new PagedList<DTO_Customer>(customerList, pagedList.TotalCount, pagedList.CurrentPage, pagedList.PageSize);
         }
+
+        public bool DeleteCustomerPet(string customerRowId, string petRowId)
+        {
+            try
+            {
+                var dbCustomer = this.unitOfWork.CustomerRepository.FindFirst(c => c.RowId == customerRowId, includeProperties: "CustomerPets");
+                if (dbCustomer == null)
+                {
+                    throw new Exception("Failed to get the details for the selected customer");
+                }
+
+                var dbCustomerPet = this.unitOfWork.CustomerPetsRepository.FindFirst(c => c.RowId == petRowId && c.CustomerId == dbCustomer.Id);
+                if (dbCustomerPet == null)
+                {
+                    throw new Exception("Failed to get the details for the selected customer and pet");
+                }
+
+                this.unitOfWork.CustomerPetsRepository.Remove(dbCustomerPet);
+                this.unitOfWork.Complete();
+                return true;
+            }
+            catch(Exception ex)
+            {
+                throw new DTO_SystemException { 
+                    Message = ex.Message,
+                    StatusCode = (Int32)HttpStatusCode.BadRequest,
+                    SystemException = ex
+                };
+            }
+        }
     }
 }

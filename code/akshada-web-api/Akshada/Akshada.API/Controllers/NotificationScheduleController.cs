@@ -4,6 +4,9 @@ using Akshada.DTO.Models;
 using Akshada.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Reflection;
+using static Akshada.DTO.Enums.EnumHelper;
 
 namespace Akshada.API.Controllers
 {
@@ -13,7 +16,8 @@ namespace Akshada.API.Controllers
     public class NotificationScheduleController : BaseController
     {
         private readonly INotificationScheduleService notificationScheduleService;
-        public NotificationScheduleController(INotificationScheduleService notificationScheduleService) {
+        public NotificationScheduleController(INotificationScheduleService notificationScheduleService)
+        {
             this.notificationScheduleService = notificationScheduleService;
         }
 
@@ -34,7 +38,7 @@ namespace Akshada.API.Controllers
         }
 
         [HttpGet("{systemParamRowId}")]
-        public IActionResult GetNotificationList([FromRoute]string systemParamRowId)
+        public IActionResult GetNotificationList([FromRoute] string systemParamRowId)
         {
             var response = this.notificationScheduleService.GetNotificationList(systemParamRowId);
             return SuccessResponse(response);
@@ -55,7 +59,7 @@ namespace Akshada.API.Controllers
         }
 
         [HttpDelete("notificationRowId/{notificationRowId}")]
-        public IActionResult DeleteNotificationByID([FromRoute]string notificationRowId)
+        public IActionResult DeleteNotificationByID([FromRoute] string notificationRowId)
         {
             var response = this.notificationScheduleService.DeleteNotificationByID(notificationRowId);
             return SuccessResponse(response);
@@ -66,6 +70,60 @@ namespace Akshada.API.Controllers
         {
             var response = EnumHelper.EnumToJson<NotificationEnum>();
             return SuccessResponse(response.EnumNamesValues);
+        }
+
+        [HttpPost("save-email-template")]
+        public IActionResult SaveEmailTemplate([FromBody] DTO_EmailTemplateMaster emailTemplateMaster)
+        {
+            return SuccessResponse(true);
+        }
+
+        [HttpGet("get-attributes")]
+        public IActionResult GetAttributes()
+        {
+            var response = GetAllPublicMembers(typeof(DTO_EmailTemplateVariable), false);
+            var op = response.Select(m => new EnumNameValue
+            {
+                Description = m.Name
+            }).ToList();
+
+            List<EnumNameValue> members = new List<EnumNameValue>();
+            foreach (var m in op)
+            {
+                string className = $"Akshada.DTO.Models.DTO_{m.Description}, Akshada.DTO";
+                Type type = Type.GetType(className);
+                var responseClassMembers = GetAllPublicMembers(type, true);
+                members.AddRange(responseClassMembers.Select(c => new EnumNameValue
+                {
+                    Description = $"{m.Description}.{c.Name}"
+                }).ToList());
+
+            }
+
+            return SuccessResponse(members);
+        }
+
+        List<MemberInfo> GetAllPublicMembers(Type type, bool onlyStrings)
+        {
+            var result = new List<MemberInfo>();
+
+            // Fields
+            result.AddRange(type.GetFields(BindingFlags.Public | BindingFlags.Instance));
+
+            // Properties
+            var stringProps = type
+            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(p => !onlyStrings || p.PropertyType == typeof(string))
+            .ToList();
+            result.AddRange(stringProps);
+
+            // Nested types
+            foreach (var nested in type.GetNestedTypes(BindingFlags.Public))
+            {
+                result.AddRange(GetAllPublicMembers(nested, onlyStrings));
+            }
+
+            return result;
         }
     }
 }

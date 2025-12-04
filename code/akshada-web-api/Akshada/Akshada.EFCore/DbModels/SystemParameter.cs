@@ -39,6 +39,8 @@ public partial class SystemParameter
 
     public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
 
+    public virtual ICollection<EmailTemplateMaster> EmailTemplateMasters { get; set; } = new List<EmailTemplateMaster>();
+
     public virtual ICollection<HolidaySchedule> HolidaySchedules { get; set; } = new List<HolidaySchedule>();
 
     public virtual ICollection<ImportantContactAddressDetail> ImportantContactAddressDetails { get; set; } = new List<ImportantContactAddressDetail>();

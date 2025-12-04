@@ -50,5 +50,8 @@ namespace Akshada.DTO.Enums
 
         [Description("Standard Reason For Not Providing Service")]
         StandardReasonForNotProvidingService = 14,
+
+        [Description("Message Template Variables")]
+        MessageTemplateVariables = 15,
     }
 }

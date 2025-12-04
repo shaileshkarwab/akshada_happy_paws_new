@@ -49,6 +49,10 @@ public partial class UserMaster
 
     public virtual ICollection<Customer> CustomerUpdatedByNavigations { get; set; } = new List<Customer>();
 
+    public virtual ICollection<EmailTemplateMaster> EmailTemplateMasterCreatedByNavigations { get; set; } = new List<EmailTemplateMaster>();
+
+    public virtual ICollection<EmailTemplateMaster> EmailTemplateMasterUpdatedByNavigations { get; set; } = new List<EmailTemplateMaster>();
+
     public virtual ICollection<HolidaySchedule> HolidayScheduleCreatedByNavigations { get; set; } = new List<HolidaySchedule>();
 
     public virtual ICollection<HolidaySchedule> HolidayScheduleUpdatedByNavigations { get; set; } = new List<HolidaySchedule>();

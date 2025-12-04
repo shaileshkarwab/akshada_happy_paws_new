@@ -20,5 +20,7 @@ namespace Akshada.Services.Interfaces
         List<DTO_LookUp> GetSystemParameterDetailsByEnumIds(List<Int32> enumID);
 
         List<DTO_SystemParameter> GetSystemParameterDataDetailsByEnumId(Int32 enumID);
+
+        bool DeleteSystemParameter(string sysParameterRowId);
     }
 }

@@ -104,6 +104,13 @@ namespace Akshada.API.Controllers
             return SuccessResponse(response);
         }
 
-        
+
+        [HttpDelete("delete-customer-pet/customerRowId/{customerRowId}/petRowId/{petRowId}")]
+        public IActionResult DeleteCustomerPet([FromRoute] string customerRowId, [FromRoute] string petRowId)
+        {
+            var response = this.CustomerService.DeleteCustomerPet(customerRowId, petRowId);
+            return SuccessResponse(response);
+        }
+
     }
 }

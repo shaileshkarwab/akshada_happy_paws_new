@@ -32,5 +32,7 @@ namespace Akshada.Services.Interfaces
         DTO_PetInformation GetPetByCustomerAndPetID(string customerRowID , string petRowId);
 
         PagedList<DTO_Customer>  GetCustomerList(DTO_FilterAndPaging filterAndPaging);
+
+        bool DeleteCustomerPet(string customerRowId, string petRowId);
     }
 }

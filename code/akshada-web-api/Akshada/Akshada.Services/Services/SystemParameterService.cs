@@ -90,7 +90,7 @@ namespace Akshada.Services.Services
 
             if (!string.IsNullOrEmpty(systemParameter.RowId))
             {
-                var checkExisting = this.unitOfWork.SystemParamRepository.Any(c => c.ParamValue == systemParameter.ParamValue && c.RowId != systemParameter.RowId );
+                var checkExisting = this.unitOfWork.SystemParamRepository.Any(c => c.ParamValue == systemParameter.ParamValue && c.RowId != systemParameter.RowId);
                 if (checkExisting)
                 {
                     return false;
@@ -143,6 +143,30 @@ namespace Akshada.Services.Services
             {
                 throw new DTO_SystemException
                 {
+                    StatusCode = (Int32)HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
+            }
+        }
+
+        public bool DeleteSystemParameter(string sysParameterRowId)
+        {
+            try
+            {
+                var dbSystemParameter = this.unitOfWork.SystemParamRepository.FindFirst(c=>c.RowId == sysParameterRowId);
+                if(dbSystemParameter == null)
+                {
+                    throw new Exception("Failed to get the details of system parameter for delete");
+                }
+                this.unitOfWork.SystemParamRepository.Remove(dbSystemParameter);
+                this.unitOfWork.Complete();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new DTO_SystemException
+                {
+                    SystemException = ex,
                     StatusCode = (Int32)HttpStatusCode.BadRequest,
                     Message = ex.Message
                 };

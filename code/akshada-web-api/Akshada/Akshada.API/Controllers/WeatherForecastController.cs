@@ -8,6 +8,7 @@ using QRCoder;
 using System.Drawing;
 using System.Drawing.Imaging;
 using Akshada.Services.Services;
+using System.Reflection;
 
 namespace Akshada.API.Controllers
 {
@@ -26,7 +27,7 @@ namespace Akshada.API.Controllers
         private readonly ILogger<WeatherForecastController> _logger;
         private readonly ITemplateService<DTO_WalkingServiceRequest> _templateService;
         private readonly ICompanyInformationService companyInformationService;
-        public WeatherForecastController(GoogleMapService mapService,ICompanyInformationService companyInformationService,ILogger<WeatherForecastController> logger, ISrvRequestService srvRequestService, ITemplateService<DTO_WalkingServiceRequest> templateService)
+        public WeatherForecastController(GoogleMapService mapService, ICompanyInformationService companyInformationService, ILogger<WeatherForecastController> logger, ISrvRequestService srvRequestService, ITemplateService<DTO_WalkingServiceRequest> templateService)
         {
             _logger = logger;
             this.srvRequestService = srvRequestService;
@@ -77,7 +78,7 @@ namespace Akshada.API.Controllers
                     IsBodyHtml = true
                 })
                 {
-                    
+
                     smtp.Send(message);
                 }
 
@@ -96,7 +97,7 @@ namespace Akshada.API.Controllers
             var customerRowId = "27e8be06-bd99-4e69-990f-7a18f25b5f0a";
             var petRowId = "9b433d4e-5ee5-4ccd-945a-2f30c6d2b909";
             var serviceRequestRowId = "49541f74-5e9d-4917-80a2-ed07987ffd89";
-            var response = this.srvRequestService.GetDetailsForWalkingService(customerRowId,petRowId,serviceRequestRowId);
+            var response = this.srvRequestService.GetDetailsForWalkingService(customerRowId, petRowId, serviceRequestRowId);
             var companyInfo = await this.companyInformationService.GetCompanyInformation();
             var outPut = await this._templateService.GetFormattedTemplate(response, DTO.Enums.EmaiNotificationTemplate.PetWalkingServiceNotification, companyInfo);
 
@@ -155,7 +156,7 @@ namespace Akshada.API.Controllers
 
 
         [HttpGet("thumbnail")]
-        public async Task<IActionResult> GetThumbnail([FromQuery]double lat, [FromQuery] double lng)
+        public async Task<IActionResult> GetThumbnail([FromQuery] double lat, [FromQuery] double lng)
         {
             var image = await _mapService.GenerateThumbnail(lat, lng);
 
@@ -164,5 +165,56 @@ namespace Akshada.API.Controllers
                 ThumbnailUrl = $"{Request.Scheme}://{Request.Host}/thumbnails/{Path.GetFileName(image)}"
             });
         }
+
+
+        [HttpGet("get-attributes")]
+        public IActionResult GetAttributes()
+        {
+            var response = GetAllPublicMembers(typeof(DTO_EmailTemplateVariable));
+            var op = response.Select(m => new
+            {
+                Name = m.Name
+            }).ToList();
+            return Ok(op);
+        }
+
+
+        [HttpGet("get-attributes/{selectedEntity}")]
+        public IActionResult GetAttributes([FromRoute] string selectedEntity)
+        {
+            string className = $"Akshada.DTO.Models.DTO_{selectedEntity}, Akshada.DTO";
+            Console.WriteLine(typeof(DTO_Customer).Assembly.FullName);
+            Type type = Type.GetType(className);
+            var response = GetAllPublicMembers(type);
+            var op = response.Select(m => new
+            {
+                Name = m.Name
+            }).ToList();
+            return Ok(op);
+        }
+
+        List<MemberInfo> GetAllPublicMembers(Type type)
+        {
+            var result = new List<MemberInfo>();
+
+            // Fields
+            result.AddRange(type.GetFields(BindingFlags.Public | BindingFlags.Instance));
+
+            // Properties
+            var stringProps = type
+    .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+    .Where(p => p.PropertyType == typeof(string))
+    .ToList();
+            result.AddRange(stringProps);
+
+            // Nested types
+            foreach (var nested in type.GetNestedTypes(BindingFlags.Public))
+            {
+                result.AddRange(GetAllPublicMembers(nested));
+            }
+
+            return result;
+        }
+
     }
 }

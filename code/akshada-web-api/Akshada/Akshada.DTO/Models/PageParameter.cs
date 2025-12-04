@@ -8,7 +8,7 @@ namespace Akshada.DTO.Models
 {
     public class PageParameter
     {
-        const int maxPageSize = 50;
+        const int maxPageSize = 150;
         public int PageNumber { get; set; } = 1;
 
         private int _pageSize = 10;

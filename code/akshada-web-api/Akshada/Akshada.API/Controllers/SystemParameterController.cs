@@ -59,5 +59,13 @@ namespace Akshada.API.Controllers
             var response = this.systemParameterService.GetSystemParameterDataDetailsByEnumId(enumID);
             return SuccessResponse(response);
         }
+
+
+        [HttpDelete("sysParameterRowId/{sysParameterRowId}")]
+        public IActionResult DeleteSystemParameter([FromRoute] string sysParameterRowId)
+        {
+            var response = this.systemParameterService.DeleteSystemParameter(sysParameterRowId);
+            return SuccessResponse(response);
+        }
     }
 }

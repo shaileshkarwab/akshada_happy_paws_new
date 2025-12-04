@@ -147,13 +147,11 @@ namespace Akshada.API.Controllers
             {
                 var formCollection = await Request.ReadFormAsync();
                 var file = formCollection.Files.First();
-                string _lat = formCollection["lat"];
-                string _long = formCollection["long"];
                 var monthYear = string.Format("{0}_{1}", System.Globalization.DateTimeFormatInfo.CurrentInfo.GetMonthName(System.DateTime.Now.Month), System.DateTime.Now.Year);
                 var newFileName = AddFileToFolder(string.Format("{0}\\{1}", uploadFolderName, monthYear), file, string.Empty);
                 if (!string.IsNullOrEmpty(newFileName))
                 {
-                    return SuccessResponse(new { UploadedFileName = newFileName });
+                    return SuccessResponse(new { UploadedFileName = newFileName, UploadedFileNamePath = $"{DTO_Configuration.DataUploadPath}{uploadFolderName}/{monthYear}/{newFileName}" });
                 }
                 else
                 {
