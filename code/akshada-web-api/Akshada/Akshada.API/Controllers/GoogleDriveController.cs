@@ -59,7 +59,8 @@ namespace Akshada.API.Controllers
                 throw new DTO.Models.DTO_SystemException
                 {
                     StatusCode = (Int32)HttpStatusCode.BadRequest,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    SystemException = ex
                 };
             }
         }

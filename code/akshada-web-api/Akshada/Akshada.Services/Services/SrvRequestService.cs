@@ -19,11 +19,13 @@ namespace Akshada.Services.Services
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly IHttpContextAccessor httpContextAccessor;
-        public SrvRequestService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        private readonly GoogleMapService googleMapService;
+        public SrvRequestService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, GoogleMapService googleMapService)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
             this.httpContextAccessor = httpContextAccessor;
+            this.googleMapService = googleMapService;
         }
 
         public bool AddCustomerPetWalkingServiceRequest(string customerRowId, string petRowId, DTO_WalkingServiceRequest saveEntity)
@@ -212,7 +214,8 @@ namespace Akshada.Services.Services
             {
                 throw new DTO_SystemException { 
                     StatusCode = (Int32)HttpStatusCode.BadRequest,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    SystemException = ex
                 };
             }
         }
@@ -240,7 +243,7 @@ namespace Akshada.Services.Services
                     throw new Exception("Failed to get the details for the customer pet walking service request");
                 }
 
-                foreach (var m in walkingServiceRequestDayScheduleAssignedToUsers)
+                foreach (var m in walkingServiceRequestDayScheduleAssignedToUsers.Where(c=> !string.IsNullOrEmpty( c.UserId)))
                 {
                     var userDB = this.unitOfWork.UserRepository.FindFirst(c => c.RowId == m.UserId);
                     if (userDB == null)
@@ -290,7 +293,8 @@ namespace Akshada.Services.Services
                 throw new DTO_SystemException
                 {
                     StatusCode = (Int32)HttpStatusCode.BadRequest,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    SystemException = ex
                 };
             }
         }
@@ -364,7 +368,8 @@ namespace Akshada.Services.Services
                 throw new DTO_SystemException
                 {
                     StatusCode = (Int32)HttpStatusCode.BadRequest,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    SystemException = ex
                 };
             }
         }
@@ -410,7 +415,8 @@ namespace Akshada.Services.Services
                 throw new DTO_SystemException
                 {
                     StatusCode = (Int32)HttpStatusCode.BadRequest,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    SystemException = ex
                 };
             }
         }
@@ -454,7 +460,8 @@ namespace Akshada.Services.Services
             {
                 throw new DTO_SystemException { 
                     StatusCode = (Int32)HttpStatusCode.BadRequest,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    SystemException = ex
                 };
             }
         }
@@ -509,7 +516,8 @@ namespace Akshada.Services.Services
                 throw new DTO_SystemException
                 {
                     StatusCode = (Int32)HttpStatusCode.BadRequest,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    SystemException = ex
                 };
             }
         }
@@ -734,8 +742,8 @@ namespace Akshada.Services.Services
                 }
 
                 dbWalkingRequest.ServiceOfferedDate = DateTime.ParseExact(walkingRecord.ServiceOfferedDate, "dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture);
-                dbWalkingRequest.FromTime = DateTime.ParseExact(walkingRecord.FromTime, "M/d/yyyy h:mm:ss tt", System.Globalization.CultureInfo.InvariantCulture);
-                dbWalkingRequest.ToTime = DateTime.ParseExact(walkingRecord.ToTime, "M/d/yyyy h:mm:ss tt", System.Globalization.CultureInfo.InvariantCulture);
+                dbWalkingRequest.FromTime =  DateTimeHelper.ConvertTimeStringToDate( walkingRecord.FromTime);
+                dbWalkingRequest.ToTime = DateTimeHelper.ConvertTimeStringToDate(walkingRecord.ToTime);
                 dbWalkingRequest.CustomerId = customerDB.Id;
                 dbWalkingRequest.PetId = petDB.Id;
                 dbWalkingRequest.WalkingServiceMasterId = serviceRequestDB.Id;
@@ -762,6 +770,7 @@ namespace Akshada.Services.Services
                         dbWalkingRecordImage.Lattitude = img.Lattitude.Value;
                         dbWalkingRecordImage.Longitude = img.Longitude.Value;
                         dbWalkingRecordImage.RecordTime = DateTimeHelper.ConvertTimeStringToDate(img.RecordTime);
+                        dbWalkingRecordImage.Address = googleMapService.GetAddressFromLatLng(img.Lattitude.Value, img.Longitude.Value).Result;
                         this.unitOfWork.WalkingServiceRecordImagesRepo.Update(dbWalkingRecordImage);
                     }
                     else
@@ -772,8 +781,9 @@ namespace Akshada.Services.Services
                             ImageName = img.ImageName,
                             ImageUploadSystemId = imageTypeSystemParam.Id,
                             Lattitude = img.Lattitude.Value,
-                            Longitude = img.Longitude.Value,    
-                            RecordTime = DateTimeHelper.ConvertTimeStringToDate(img.RecordTime)
+                            Longitude = img.Longitude.Value,
+                            RecordTime = DateTimeHelper.ConvertTimeStringToDate(img.RecordTime),
+                            Address = googleMapService.GetAddressFromLatLng(img.Lattitude.Value, img.Longitude.Value).Result
                         });
                     }
                 }
@@ -787,7 +797,8 @@ namespace Akshada.Services.Services
                 throw new DTO_SystemException
                 {
                     StatusCode = (Int32)HttpStatusCode.BadRequest,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    SystemException = ex
                 };
             }
         }

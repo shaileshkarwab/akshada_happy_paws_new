@@ -98,6 +98,7 @@ namespace Akshada.Services.Services
                 {
                     StatusCode = (Int32)HttpStatusCode.BadRequest,
                     Message = ex.Message,
+                    SystemException = ex
                 };
             }
             return null;

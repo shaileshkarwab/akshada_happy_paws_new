@@ -1,4 +1,5 @@
 ﻿using Akshada.API.AuthFilter;
+using Akshada.API.Extensions;
 using Akshada.DTO.Enums;
 using Akshada.DTO.Models;
 using Akshada.Services.Interfaces;
@@ -75,6 +76,7 @@ namespace Akshada.API.Controllers
         [HttpPost("save-email-template")]
         public IActionResult SaveEmailTemplate([FromBody] DTO_EmailTemplateMaster emailTemplateMaster)
         {
+            var response = this.notificationScheduleService.SaveEmailTemplate(emailTemplateMaster);
             return SuccessResponse(true);
         }
 
@@ -124,6 +126,31 @@ namespace Akshada.API.Controllers
             }
 
             return result;
+        }
+
+
+
+        [HttpPost("email-template")]
+        public IActionResult GetEmailTemplates([FromBody] DTO_FilterAndPaging filterAndPaging)
+        {
+            var response = this.notificationScheduleService.GetEmailTemplates(filterAndPaging);
+            this.AddPaginationHeader(response);
+            return SuccessResponse(response);
+        }
+
+
+        [HttpGet("email-template/templateRowId/{templateRowId}")]
+        public IActionResult ReteriveEmailTemplate([FromRoute] string templateRowId)
+        {
+            var response = this.notificationScheduleService.ReteriveEmailTemplate(templateRowId);
+            return SuccessResponse(response);
+        }
+
+        [HttpPost("test-email/templateRowId/{templateRowId}")]
+        public IActionResult TestEmail([FromRoute] string templateRowId, [FromBody]DTO_TestEmailTemplate testEmailTemplate)
+        {
+            var response = this.notificationScheduleService.TestEmail(templateRowId, testEmailTemplate);
+            return SuccessResponse(response);
         }
     }
 }

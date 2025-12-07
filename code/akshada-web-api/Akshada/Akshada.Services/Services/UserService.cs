@@ -46,7 +46,8 @@ namespace Akshada.Services.Services
                 throw new DTO_SystemException
                 {
                     StatusCode = (Int32)HttpStatusCode.BadRequest,
-                    Message = "There requested user cannot be deleted. It may be refrenced in some other transactions"
+                    Message = "There requested user cannot be deleted. It may be refrenced in some other transactions",
+                    SystemException = de
                 };
             }
             catch (Exception ex)
@@ -54,7 +55,8 @@ namespace Akshada.Services.Services
                 throw new DTO_SystemException
                 {
                     StatusCode = (Int32)HttpStatusCode.BadRequest,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    SystemException = ex
                 };
             }
         }
@@ -126,7 +128,8 @@ namespace Akshada.Services.Services
             {
                 throw new DTO_SystemException {
                      StatusCode = (Int32)HttpStatusCode.BadRequest,
-                     Message = ex.Message
+                     Message = ex.Message,
+                    SystemException = ex
                 };
             }
         }
@@ -173,16 +176,21 @@ namespace Akshada.Services.Services
                 var validate = ValidateEntityForInsert(saveEntity);
                 if (validate)
                 {
-                    var dbUser = this.mapper.Map<UserMaster>(saveEntity);
                     var userID = Convert.ToInt32(this.httpContextAccessor.HttpContext.Items["USER_ID"]);
-                    dbUser.RowId = System.Guid.NewGuid().ToString();
-                    dbUser.CreatedAt = DateTime.Now;
-                    dbUser.CreatedBy = userID;
-                    dbUser.UpdatedAt = DateTime.Now;
-                    dbUser.UpdatedBy = userID;
-                    dbUser.RoleId = this.unitOfWork.RolesRepository.FindFirst(c => c.RowId == saveEntity.Role.RowId).Id;
-                    dbUser.Role = this.unitOfWork.RolesRepository.FindFirst(c => c.RowId == saveEntity.Role.RowId);
-                    dbUser.Password = BCrypt.Net.BCrypt.HashPassword(saveEntity.Password);
+                    var dbUser = new UserMaster { 
+                        RowId = System.Guid.NewGuid().ToString(),
+                        FirstName = saveEntity.FirstName,
+                        LastName = saveEntity.LastName,
+                        RoleId = this.unitOfWork.RolesRepository.FindFirst(c => c.RowId == saveEntity.Role.RowId).Id,
+                        LoginName = saveEntity.LoginName,
+                        Status = saveEntity.Status,
+                        ImagePath = saveEntity.ImagePath,
+                        CreatedBy = userID,
+                        CreatedAt = System.DateTime.Now,
+                        UpdatedBy = userID,
+                        UpdatedAt = System.DateTime.Now,
+                        Password  = BCrypt.Net.BCrypt.HashPassword(saveEntity.Password)
+                    };
                     this.unitOfWork.UserRepository.Add(dbUser);
                     this.unitOfWork.Complete();
                     return true;
@@ -197,7 +205,8 @@ namespace Akshada.Services.Services
                 throw new DTO_SystemException
                 {
                     StatusCode = (Int32)HttpStatusCode.BadRequest,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    SystemException = ex
                 };
             }
         }
@@ -238,7 +247,8 @@ namespace Akshada.Services.Services
                 throw new DTO_SystemException
                 {
                     StatusCode = (Int32)HttpStatusCode.BadRequest,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    SystemException = ex
                 };
             }
             throw new NotImplementedException();
@@ -290,7 +300,8 @@ namespace Akshada.Services.Services
             {
                 throw new DTO_SystemException { 
                     StatusCode = (Int32)HttpStatusCode.BadRequest,
-                    Message = ex.Message,   
+                    Message = ex.Message,
+                    SystemException = ex
                 };
             }
         }

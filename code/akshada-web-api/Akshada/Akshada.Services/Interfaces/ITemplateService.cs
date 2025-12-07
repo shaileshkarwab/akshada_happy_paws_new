@@ -12,5 +12,6 @@ namespace Akshada.Services.Interfaces
     public interface ITemplateService<T> where T : class
     {
         Task<string> GetFormattedTemplate(T model, EmaiNotificationTemplate notificationTemplate,DTO_CompanyInformation companyInfo);
+        Task<string> GetFormattedTemplate(T model, string template);
     }
 }

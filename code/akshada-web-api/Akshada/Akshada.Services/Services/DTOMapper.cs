@@ -171,6 +171,9 @@ namespace Akshada.Services.Services
             CreateMap<CompanyInformationUpiAccount, DTO_CompanyInformationUpiAccount>().ReverseMap();
             CreateMap<AssignOtherServiceRequestUser, DTO_AssignOtherServiceRequestUser>().ReverseMap();
             CreateMap<DTO_WalkingServiceRequestQuery, WalkingServiceRequestQuery>().ReverseMap();
+            CreateMap<EmailTemplateMaster, DTO_EmailTemplateList>().ReverseMap();
+            CreateMap<EmailTemplateMaster, DTO_EmailTemplateMaster>().ReverseMap();
+            CreateMap<EmailTemplateMasterScheduleDetail, DTO_EmailTemplateMasterScheduleDetail>().ReverseMap();
         }
     }
 }

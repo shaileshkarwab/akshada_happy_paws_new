@@ -7,6 +7,7 @@ using Akshada.API.Convertors;
 using Akshada.API.CustomExceptionMiddleware;
 using Akshada.API.Migrations;
 using Akshada.API.ServiceRegistration;
+using Akshada.DTO.Models;
 using Akshada.EFCore.DbModels;
 using Akshada.Services.Services;
 using FluentMigrator.Runner;
@@ -130,6 +131,8 @@ builder.Services.Configure<FormOptions>(o =>
 builder.Services.Configure<GoogleServiceAccountOptions>(
     builder.Configuration.GetSection("GoogleDriveServiceAccount"));
 
+
+builder.Services.Configure<DTO_SMTPSettings>(builder.Configuration.GetSection("SMTPSettings"));
 
 // Force JSON to use UTC everywhere
 builder.Services.Configure<JsonOptions>(options =>

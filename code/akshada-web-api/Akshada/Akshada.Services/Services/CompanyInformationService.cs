@@ -41,7 +41,8 @@ namespace Akshada.Services.Services
                 throw new DTO_SystemException
                 {
                     Message = ex.Message,
-                    StatusCode = (Int32)HttpStatusCode.BadRequest
+                    StatusCode = (Int32)HttpStatusCode.BadRequest,
+                    SystemException = ex
                 };
             }
         }
@@ -100,6 +101,7 @@ namespace Akshada.Services.Services
                 {
                     StatusCode = (Int32)HttpStatusCode.BadRequest,
                     Message = ex.Message,
+                    SystemException = ex
                 };
             }
         }

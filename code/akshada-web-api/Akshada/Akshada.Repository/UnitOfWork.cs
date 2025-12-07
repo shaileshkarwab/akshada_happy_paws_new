@@ -53,6 +53,8 @@ namespace Akshada.Repository
             CompanyInformationUPIRepository = new CompanyInformationUPIRepository(akshadaPawsContext, configuration, services);
             CompanyInformationBankAccountRepository = new CompanyInformationBankAccountRepository(akshadaPawsContext, configuration, services);
             ServiceRateDetailRepository = new ServiceRateDetailRepository(akshadaPawsContext, configuration, services);
+            EmailTemplateMasterRepository = new EmailTemplateMasterRepository(akshadaPawsContext, configuration, services);
+            EmailTemplateMasterScheduleDetailRepository = new EmailTemplateMasterScheduleDetailRepository(akshadaPawsContext, configuration, services);
         }
         public IUserRepository UserRepository { get; private set; }
         public IMenuMasterRepository MenuMasterRepository { get; private set; }
@@ -114,6 +116,9 @@ namespace Akshada.Repository
         public CompanyInformationBankAccountRepository CompanyInformationBankAccountRepository { get; private set; }
 
         public ServiceRateDetailRepository ServiceRateDetailRepository { get; private set; }
+
+        public EmailTemplateMasterRepository EmailTemplateMasterRepository { get; private set; }
+        public EmailTemplateMasterScheduleDetailRepository EmailTemplateMasterScheduleDetailRepository { get; private set; }
         public int Complete()
         {
             return this.akshadaPawsContext.SaveChanges();

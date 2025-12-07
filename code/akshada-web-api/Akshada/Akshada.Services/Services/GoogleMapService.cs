@@ -11,10 +11,10 @@ namespace Akshada.Services.Services
     {
         private readonly string _apiKey;
         private readonly HttpClient _httpClient;
-
-        public GoogleMapService()
+        private readonly IConfiguration _configuration;
+        public GoogleMapService(IConfiguration _configuration)
         {
-            _apiKey = "AIzaSyAEokBmhbxFJem9lLECzscX3Ykt11kK-jg";
+            _apiKey = _configuration.GetSection("GoogleMapApiKey:Key").Value!;
             _httpClient = new HttpClient();
         }
 
@@ -35,19 +35,29 @@ namespace Akshada.Services.Services
         }
 
 
-        public async Task<string> GetAddressFromLatLng(double lat, double lng)
+        public async Task<string> GetAddressFromLatLng(double? lat, double? lng)
         {
-            string apiKey = _apiKey;
-            string url = $"https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lng}&key={apiKey}";
+            try
+            {
+                if (lat == null || lng == null)
+                    return string.Empty;
 
-            using var client = new HttpClient();
-            var response = await client.GetAsync(url);
-            var result = await response.Content.ReadAsStringAsync();
+                string apiKey = _apiKey;
+                string url = $"https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lng}&key={apiKey}";
 
-            dynamic json = Newtonsoft.Json.JsonConvert.DeserializeObject(result);
-            string address = json.results[0].formatted_address;
+                using var client = new HttpClient();
+                var response = await client.GetAsync(url);
+                var result = await response.Content.ReadAsStringAsync();
 
-            return address;
+                dynamic json = Newtonsoft.Json.JsonConvert.DeserializeObject(result);
+                string address = json.results[0].formatted_address;
+
+                return address;
+            }
+            catch(Exception ex)
+            {
+                return string.Empty;
+            }
         }
     }
 }

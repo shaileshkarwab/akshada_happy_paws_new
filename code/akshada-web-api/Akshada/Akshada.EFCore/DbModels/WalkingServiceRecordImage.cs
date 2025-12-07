@@ -21,6 +21,8 @@ public partial class WalkingServiceRecordImage
 
     public DateTime RecordTime { get; set; }
 
+    public string? Address { get; set; }
+
     public virtual SystemParameter ImageUploadSystem { get; set; } = null!;
 
     public virtual WalkingServiceRecord WalkingServiceRecordMaster { get; set; } = null!;

@@ -106,7 +106,8 @@ namespace Akshada.API.Controllers
                 throw new DTO.Models.DTO_SystemException
                 {
                     StatusCode = (Int32)HttpStatusCode.BadRequest,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    SystemException = ex
                 };
             }
 
@@ -151,7 +152,12 @@ namespace Akshada.API.Controllers
                 var newFileName = AddFileToFolder(string.Format("{0}\\{1}", uploadFolderName, monthYear), file, string.Empty);
                 if (!string.IsNullOrEmpty(newFileName))
                 {
-                    return SuccessResponse(new { UploadedFileName = newFileName, UploadedFileNamePath = $"{DTO_Configuration.DataUploadPath}{uploadFolderName}/{monthYear}/{newFileName}" });
+                    return SuccessResponse(new
+                    {
+                        UploadedFileName = newFileName,
+                        UploadedFileNamePath = $"{DTO_Configuration.DataUploadPath}{uploadFolderName}/{monthYear}/{newFileName}",
+                        FolderPathAndImage = $"{monthYear}/{newFileName}"
+                    });
                 }
                 else
                 {

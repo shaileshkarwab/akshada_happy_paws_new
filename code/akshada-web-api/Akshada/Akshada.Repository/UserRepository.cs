@@ -110,14 +110,16 @@ namespace Akshada.Repository
                 throw new DTO_SystemException()
                 {
                     Message = "Invalid user credentials. Password Not Matching",
-                    StatusCode = (int)HttpStatusCode.BadRequest
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    SystemException = new Exception()
                 };
             }
             catch (Exception ex) {
                 throw new DTO_SystemException()
                 {
                     Message = string.Format("{0} - Exception {1}", "Invalid user credentials", ex.Message),
-                    StatusCode = (int)HttpStatusCode.BadRequest
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    SystemException = ex
                 };
             }
         }
@@ -150,7 +152,8 @@ namespace Akshada.Repository
                 throw new DTO_SystemException()
                 {
                     Message = "Invalid user credentials. Password Not Matching",
-                    StatusCode = (int)HttpStatusCode.BadRequest
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    SystemException = new Exception()
                 };
             }
             catch (Exception ex)
@@ -158,7 +161,8 @@ namespace Akshada.Repository
                 throw new DTO_SystemException()
                 {
                     Message = string.Format("{0} - Exception {1}", "Invalid user credentials", ex.Message),
-                    StatusCode = (int)HttpStatusCode.BadRequest
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    SystemException = ex
                 };
             }
 

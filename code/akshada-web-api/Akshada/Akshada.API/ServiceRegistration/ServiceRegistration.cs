@@ -42,6 +42,7 @@ namespace Akshada.API.ServiceRegistration
             services.AddScoped<ISignalRService, SignalRService>();
             services.AddSignalR();
             services.AddScoped<GoogleMapService>();
+            services.AddScoped<IEmailService, EmailService>();
             return services;
         }
     }

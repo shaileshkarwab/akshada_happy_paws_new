@@ -1909,6 +1909,10 @@ public partial class AkshadaPawsContext : DbContext
             entity.HasIndex(e => e.RowId, "IX_walking_service_record_images_row_id").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Address)
+                .HasColumnName("address")
+                .UseCollation("utf8mb3_general_ci")
+                .HasCharSet("utf8mb3");
             entity.Property(e => e.ImageName)
                 .HasMaxLength(255)
                 .HasColumnName("image_name")

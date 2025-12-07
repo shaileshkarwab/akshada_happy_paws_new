@@ -70,6 +70,9 @@ namespace Akshada.Repository.Interfaces
         CompanyInformationBankAccountRepository CompanyInformationBankAccountRepository { get; }
 
         ServiceRateDetailRepository ServiceRateDetailRepository { get; }
+
+        EmailTemplateMasterRepository EmailTemplateMasterRepository { get; }
+        EmailTemplateMasterScheduleDetailRepository EmailTemplateMasterScheduleDetailRepository { get; }
         int Complete();
     }
 }

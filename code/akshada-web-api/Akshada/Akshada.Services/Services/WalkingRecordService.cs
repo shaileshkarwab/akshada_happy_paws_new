@@ -20,11 +20,13 @@ namespace Akshada.Services.Services
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly IHttpContextAccessor httpContextAccessor;
-        public WalkingRecordService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        private readonly GoogleMapService _mapService;
+        public WalkingRecordService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, GoogleMapService _mapService)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
             this.httpContextAccessor = httpContextAccessor;
+            this._mapService = _mapService;
         }
 
         public bool DeleteWalkingServiceRecord(string rowId)
@@ -45,6 +47,8 @@ namespace Akshada.Services.Services
                 {
                     StatusCode = (Int32)HttpStatusCode.BadRequest,
                     Message = ex.Message,
+                    SystemException = ex,
+
                 };
             }
         }
@@ -152,7 +156,10 @@ namespace Akshada.Services.Services
                         {
                             RowId = System.Guid.NewGuid().ToString(),
                             ImageName = img.ImageName,
-                            ImageUploadSystemId = dbImgeUploadType.Id
+                            ImageUploadSystemId = dbImgeUploadType.Id,
+                            Lattitude = img.Lattitude.HasValue? img.Lattitude.Value : 0,
+                            Longitude = img.Longitude.HasValue? img.Longitude.Value : 0,
+                            Address = this._mapService.GetAddressFromLatLng(img.Lattitude, img.Longitude).Result
                         });
                     }
                 }
@@ -166,6 +173,8 @@ namespace Akshada.Services.Services
                 {
                     StatusCode = (Int32)HttpStatusCode.BadRequest,
                     Message = ex.Message,
+                    SystemException = ex
+
                 };
             }
         }

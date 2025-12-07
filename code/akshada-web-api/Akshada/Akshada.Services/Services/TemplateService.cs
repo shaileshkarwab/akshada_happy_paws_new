@@ -55,5 +55,14 @@ namespace Akshada.Services.Services
                 throw ex;
             }
         }
+
+        public Task<string> GetFormattedTemplate(T model, string template)
+        {
+            var formattedTemplate = Template.Parse(template);
+            var res = formattedTemplate.Render(model, member => member.Name);
+            return Task.Run(() => { 
+                return res;
+            }); 
+        }
     }
 }

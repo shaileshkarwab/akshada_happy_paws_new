@@ -22,5 +22,13 @@ namespace Akshada.Services.Interfaces
         bool DeleteNotificationList(string systemParamRowId);
 
         bool DeleteNotificationByID(string notificationRowId);
+
+        bool SaveEmailTemplate(DTO_EmailTemplateMaster emailTemplateMaster);
+
+        PagedList<DTO_EmailTemplateList> GetEmailTemplates(DTO_FilterAndPaging filterAndPaging);
+
+        DTO_EmailTemplateMaster ReteriveEmailTemplate(string templateRowId);
+
+        bool TestEmail(string templateRowId, DTO_TestEmailTemplate testEmailTemplate);
     }
 }
