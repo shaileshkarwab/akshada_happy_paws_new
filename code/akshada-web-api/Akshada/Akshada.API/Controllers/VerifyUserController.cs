@@ -3,6 +3,7 @@ using Akshada.DTO.Models;
 using Akshada.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MySqlConnector;
 
 namespace Akshada.API.Controllers
 {
@@ -11,12 +12,16 @@ namespace Akshada.API.Controllers
     public class VerifyUserController : BaseController
     {
         private readonly IUserVerificationService userVerificationService;
-        public VerifyUserController(IUserVerificationService userVerificationService) { 
+        private readonly ILogger<VerifyUserController> logger;
+        public VerifyUserController(IUserVerificationService userVerificationService, ILogger<VerifyUserController> logger) { 
             this.userVerificationService = userVerificationService;
+            this.logger = logger;
         }
 
         [HttpPost("user-verification")]
         public IActionResult UserVerification([FromBody] DTO_UserVerification userVerification) {
+
+            this.logger.LogInformation("Verifying user" + Newtonsoft.Json.JsonConvert.SerializeObject(userVerification));
             var response = this.userVerificationService.VerifyUser(userVerification);
             if (response.UserVerified)
             {

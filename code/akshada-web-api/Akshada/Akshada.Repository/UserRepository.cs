@@ -160,12 +160,7 @@ namespace Akshada.Repository
                         IsCompanyPresent = this.akshadaPawsContext.CompanyInformations.Any()
                     };
                 }
-                throw new DTO_SystemException()
-                {
-                    Message = "Invalid user credentials. Password Not Matching",
-                    StatusCode = (int)HttpStatusCode.BadRequest,
-                    SystemException = new Exception()
-                };
+                throw new Exception("Invalid user credentials. Password Not Matching");
             }
             catch (Exception ex)
             {
