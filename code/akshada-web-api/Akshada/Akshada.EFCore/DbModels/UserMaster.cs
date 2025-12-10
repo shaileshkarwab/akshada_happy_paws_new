@@ -33,6 +33,10 @@ public partial class UserMaster
 
     public string? MobilePin { get; set; }
 
+    public string RefreshToken { get; set; } = null!;
+
+    public DateOnly RefreshTokenExpiry { get; set; }
+
     public virtual ICollection<AssignOtherServiceRequestUser> AssignOtherServiceRequestUserAssignedToUsers { get; set; } = new List<AssignOtherServiceRequestUser>();
 
     public virtual ICollection<AssignOtherServiceRequestUser> AssignOtherServiceRequestUserCreatedByNavigations { get; set; } = new List<AssignOtherServiceRequestUser>();

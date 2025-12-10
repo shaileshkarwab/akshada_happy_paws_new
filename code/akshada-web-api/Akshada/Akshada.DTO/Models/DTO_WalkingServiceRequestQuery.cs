@@ -58,6 +58,8 @@ namespace Akshada.DTO.Models
         public int? VaccinationPendingDays { get; set; }
         public string? PetAndOwnerImage { get; set; }
 
+        public string? TimeSlot { get; set; }
+        
         public string? PetAndOwnerImageFullPath
         {
             get

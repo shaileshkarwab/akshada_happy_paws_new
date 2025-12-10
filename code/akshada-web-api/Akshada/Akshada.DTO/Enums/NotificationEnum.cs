@@ -27,4 +27,16 @@ namespace Akshada.DTO.Enums
         [Description("Pet Walking Service Notification")]
         PetWalkingServiceNotification = 1,
     }
+
+    public enum PetWalkingSttus
+    {
+        [Description("Pending")]
+        Pending = 0,
+
+        [Description("In Progress")]
+        InProgress = 1,
+
+        [Description("Completed")]
+        Completed = 2,
+    }
 }

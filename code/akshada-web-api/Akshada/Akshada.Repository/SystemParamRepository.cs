@@ -1,4 +1,5 @@
 ﻿using Akshada.DTO.Enums;
+using Akshada.DTO.Helpers;
 using Akshada.DTO.Models;
 using Akshada.EFCore.DbModels;
 using Akshada.Repository.Interfaces;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -61,6 +63,32 @@ namespace Akshada.Repository
                 }
             }
             return base.Find(expression);
+        }
+
+        public SystemParameter GetTimeSlotId()
+        {
+
+            var now = DateTime.Now.TimeOfDay;
+
+            var result = this.akshadaPawsContext.SystemParameters
+                .Where(x => x.EnumId == 16)
+                .AsEnumerable() // Required for ParseExact
+                .Select(x => new SystemParameter
+                {
+                    RowId= x.RowId,
+                    CreatedAt = x.CreatedAt,
+                    CreatedBy = x.CreatedBy,
+                    EnumId = x.EnumId,
+                    Id = x.Id,
+                    ParamAbbrivation = x.ParamAbbrivation,
+                    ParamValue = x.ParamValue,
+                    Identifier1 = x.Identifier1,
+                    Identifier2 = x.Identifier2,
+                })
+                .Where(x => now >= DateTimeHelper.ConvertTimeStringToDate(x.Identifier1).TimeOfDay && now <= DateTimeHelper.ConvertTimeStringToDate(x.Identifier2).TimeOfDay)
+                .FirstOrDefault();
+
+            return result;
         }
 
         bool ExecuteMethod(string value)

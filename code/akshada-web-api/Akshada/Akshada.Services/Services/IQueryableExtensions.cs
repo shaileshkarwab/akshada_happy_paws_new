@@ -234,6 +234,26 @@ namespace Akshada.Services.Services
             }
 
 
+
+            // not equality filter
+            if (filterAndPaging.NotEqualityFilters != null && filterAndPaging.NotEqualityFilters.Count > 0)
+            {
+                foreach (var filter in filterAndPaging.NotEqualityFilters)
+                {
+                    var expr = GetPropertyExpression(parameter, filter.EntityName, filter.DbColumnName);
+                    if (expr is not MemberExpression memberExpr)
+                        continue;
+
+                    var propertyType = ((PropertyInfo)memberExpr.Member).PropertyType;
+                    var targetType = Nullable.GetUnderlyingType(propertyType) ?? propertyType;
+                    object? typedValue = Convert.ChangeType(filter.Value, targetType);
+
+                    var right = Expression.Constant(typedValue, propertyType);
+                    var equal = Expression.NotEqual(expr, right);
+                    combined = combined == null ? equal : Expression.AndAlso(combined, equal);
+                }
+            }
+
             if (combined == null)
                 return query;
 

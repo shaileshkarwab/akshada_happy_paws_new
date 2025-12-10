@@ -62,7 +62,7 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials()
-            .WithExposedHeaders("X-Pagination");
+            .WithExposedHeaders("X-Pagination", "REFRESH_TOKEN");
     });
 });
 

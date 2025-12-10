@@ -10,6 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -133,7 +134,8 @@ namespace Akshada.Repository
                                 on user.RoleId equals role.Id
                                 select new
                                 {
-                                    Password = user.Password
+                                    Password = user.Password,
+                                    User = user
                                 }
                                 ).FirstOrDefault();
 
@@ -142,10 +144,19 @@ namespace Akshada.Repository
 
                 if (passwordVerified)
                 {
+
+                    //update the refresh token and expiry date
+                    var refreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+                    var userDB = response.User;
+                    userDB.RefreshToken = refreshToken;
+                    userDB.RefreshTokenExpiry = System.DateOnly.FromDateTime(System.DateTime.Now.AddDays(Convert.ToInt16( configuration["Jwt:RefreshTokenExpiryDays"])));
+                    this.akshadaPawsContext.UserMasters.Update(userDB);
+                    this.akshadaPawsContext.SaveChanges();
                     return new DTO_VerifiedUser()
                     {
                         UserVerified = true,
                         Token = GenerateJSONWebToken(userDetails),
+                        RefreshToken =  Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
                         IsCompanyPresent = this.akshadaPawsContext.CompanyInformations.Any()
                     };
                 }
@@ -177,7 +188,7 @@ namespace Akshada.Repository
                 Subject = new ClaimsIdentity(new[] {
                 new Claim(ClaimTypes.Name, userVerificationRequest.UserName)
             }),
-                Expires = DateTime.UtcNow.AddMinutes(60),
+                Expires = DateTime.UtcNow.AddMinutes(Convert.ToInt16( configuration["Jwt:AccessTokenExpiryMinute"])),
                 SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature),
                 Issuer = configuration["Jwt:Issuer"],
                 Audience = configuration["Jwt:Issuer"]

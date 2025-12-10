@@ -1638,6 +1638,15 @@ public partial class AkshadaPawsContext : DbContext
                 .HasColumnName("password")
                 .UseCollation("utf8mb3_general_ci")
                 .HasCharSet("utf8mb3");
+            entity.Property(e => e.RefreshToken)
+                .HasMaxLength(255)
+                .HasDefaultValueSql("''")
+                .HasColumnName("refresh_token")
+                .UseCollation("utf8mb3_general_ci")
+                .HasCharSet("utf8mb3");
+            entity.Property(e => e.RefreshTokenExpiry)
+                .HasDefaultValueSql("'2025-12-09'")
+                .HasColumnName("refresh_token_expiry");
             entity.Property(e => e.RoleId).HasColumnName("role_id");
             entity.Property(e => e.RowId)
                 .HasColumnName("row_id")
@@ -1821,6 +1830,8 @@ public partial class AkshadaPawsContext : DbContext
             entity.HasIndex(e => e.ServiceOfferedByUserId, "FK_WSRECORD_SRV_OFFER_USER_ID");
 
             entity.HasIndex(e => e.RowId, "IX_walking_service_record_row_id").IsUnique();
+
+            entity.HasIndex(e => new { e.ServiceOfferedDate, e.WalkingServiceMasterId, e.WalkingServiceDayMasterId, e.WalkingServiceDayScheduleMasterId }, "UK_WSR_DATE_SCHEDULE").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreatedAt)

@@ -18,6 +18,10 @@ namespace Akshada.API.Controllers
         [HttpPost("user-verification")]
         public IActionResult UserVerification([FromBody] DTO_UserVerification userVerification) {
             var response = this.userVerificationService.VerifyUser(userVerification);
+            if (response.UserVerified)
+            {
+                Response.Headers.Add("REFRESH_TOKEN", response.RefreshToken);
+            }
             return SuccessResponse(response);
         }
 

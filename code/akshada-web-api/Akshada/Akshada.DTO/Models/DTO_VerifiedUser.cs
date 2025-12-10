@@ -1,4 +1,6 @@
-﻿namespace Akshada.DTO.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Akshada.DTO.Models
 {
     public class DTO_VerifiedUser
     {
@@ -6,5 +8,8 @@
         public bool UserVerified { get; set; }
 
         public bool IsCompanyPresent { get; set; }
+
+        [JsonIgnore]
+        public string RefreshToken { get; set; }
     }
 }

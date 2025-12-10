@@ -9,5 +9,6 @@ namespace Akshada.Repository.Interfaces
 {
     public interface ISystemParamRepository:IGenericRepository<SystemParameter>
     {
+        SystemParameter GetTimeSlotId();
     }
 }

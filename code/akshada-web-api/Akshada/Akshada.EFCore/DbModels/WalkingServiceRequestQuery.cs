@@ -7,6 +7,9 @@ namespace Akshada.EFCore.DbModels
 {
     public class WalkingServiceRequestQuery
     {
+
+        public string? TimeSlot { get; set; }
+        public string? TimeSlotId { get; set; }
         public DateTime ServiceDate { get; set; }
         public string DayName { get; set; }
         public string WalkingRequestID { get; set; }
@@ -58,6 +61,9 @@ namespace Akshada.EFCore.DbModels
         public string? PetAndOwnerImage { get; set; }
 
         public string? NewUserAssignToWalkingServiceRowId { get; set; }
+
+        public int CountOfWalk { get; set; }
+
         //public  DTO_UserMaster SelectedUser => new DTO_UserMaster
         //{
         //    FirstName = UserFirstName,

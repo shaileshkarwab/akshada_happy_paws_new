@@ -763,13 +763,16 @@ namespace Akshada.Services.Services
                     {
                         throw new Exception("Failed to get the image system parameter for file upoad");
                     }
+
+                    var recordTime = string.IsNullOrEmpty(img.RecordTime) ? System.DateTime.Now : DateTimeHelper.ConvertTimeStringToDate( img.RecordTime);
+
                     if (dbWalkingRecordImage != null)
                     {
                         dbWalkingRecordImage.ImageUploadSystemId = imageTypeSystemParam.Id;
                         dbWalkingRecordImage.ImageName = img.ImageName;
                         dbWalkingRecordImage.Lattitude = img.Lattitude.Value;
                         dbWalkingRecordImage.Longitude = img.Longitude.Value;
-                        dbWalkingRecordImage.RecordTime = DateTimeHelper.ConvertTimeStringToDate(img.RecordTime);
+                        dbWalkingRecordImage.RecordTime = recordTime;
                         dbWalkingRecordImage.Address = googleMapService.GetAddressFromLatLng(img.Lattitude.Value, img.Longitude.Value).Result;
                         this.unitOfWork.WalkingServiceRecordImagesRepo.Update(dbWalkingRecordImage);
                     }
@@ -782,7 +785,7 @@ namespace Akshada.Services.Services
                             ImageUploadSystemId = imageTypeSystemParam.Id,
                             Lattitude = img.Lattitude.Value,
                             Longitude = img.Longitude.Value,
-                            RecordTime = DateTimeHelper.ConvertTimeStringToDate(img.RecordTime),
+                            RecordTime = recordTime,
                             Address = googleMapService.GetAddressFromLatLng(img.Lattitude.Value, img.Longitude.Value).Result
                         });
                     }

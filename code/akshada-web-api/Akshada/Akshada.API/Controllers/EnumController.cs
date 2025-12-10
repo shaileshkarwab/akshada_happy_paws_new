@@ -19,6 +19,9 @@ namespace Akshada.API.Controllers
                 case 1:
                     list = EnumHelper.EnumToJson<SystemParameterEnum>();
                     break;
+                case 2:
+                    list = EnumHelper.EnumToJson<PetWalkingSttus>();
+                    break;
             }
             return SuccessResponse(list.EnumNamesValues);
         }

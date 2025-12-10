@@ -17,5 +17,7 @@ namespace Akshada.DTO.Models
         public string? RowId { get; set; }
 
         public bool? IsMobilePinAvailable { get; set; }
+
+        public DTO_LookUp? TimeSlot { get; set; }
     }
 }

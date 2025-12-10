@@ -18,6 +18,8 @@ namespace Akshada.DTO.Models
         public List<BooleanFilter>? BooleanFilters { get; set; }
 
         public PageParameter? PageParameter { get; set; }
+
+        public List<Filter>? NotEqualityFilters { get; set; }
     }
 
     public class BaseFilter

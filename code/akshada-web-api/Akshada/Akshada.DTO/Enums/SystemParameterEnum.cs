@@ -53,5 +53,8 @@ namespace Akshada.DTO.Enums
 
         [Description("Message Template Variables")]
         MessageTemplateVariables = 15,
+
+        [Description("Service Time Slots")]
+        ServiceTimeSlots = 16,
     }
 }

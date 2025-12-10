@@ -27,6 +27,8 @@ a.walking_request_day_master_id,
 a.walking_request_schedule_master_id,
 ifnull(d.change_from_time, FromTime) as FromTime,
 ifnull(d.change_to_time, ToTime) as ToTime,
+e.param_value as TimeSlot,
+e.row_id as TimeSlotId,
 a.CustomerName,
 a.customer_id,
 a.CustomerIsActive,
@@ -55,7 +57,8 @@ a.FrequencySystemValue,
 b.row_id WalkingServiceRecordId,
 VaccinationDueDate,
 VaccinationPendingDays,
-d.row_id as NewUserAssignToWalkingServiceRowId
+d.row_id as NewUserAssignToWalkingServiceRowId,
+ifnull(countOfWalk,1)  as CountOfWalk
 from
 (
 SELECT 
@@ -125,7 +128,20 @@ and DATE(dt) between a.from_date and a.to_date
 and j.id = a.service_system_id
 and k.id = a.frequency_system_id
 ) a
-left outer join walking_service_record b 
+left outer join  (
+select 
+a.walking_service_day_schedule_master_id, 
+a.service_offered_date, 
+a.id,
+a.row_id,
+count(*) countOfWalk
+from walking_service_record a, walking_service_record_images b
+where a.id = b.walking_service_record_master_id
+group by
+a.walking_service_day_schedule_master_id, 
+a.service_offered_date, 
+a.id
+) b 
 on b.walking_service_day_schedule_master_id = a.ScheduleId
 and date(ServiceDate) = date(b.service_offered_date)
 left outer join
@@ -168,6 +184,18 @@ and d.pet_id = a.pet_id
 and d.walking_request_master_id = a.walking_request_master_id
 and d.walking_request_day_master_id = a.walking_request_day_master_id
 and d.walking_request_schedule_master_id = a.walking_request_schedule_master_id
+left outer join
+(
+select param_value, 
+STR_TO_DATE(identifier_1, ""%h:%i %p"") timeSlot_fromTime,
+STR_TO_DATE(identifier_2, ""%h:%i %p"") timeSlot_toTime,
+row_id  
+from system_parameter
+where enum_id = 16
+) e 
+-- on 1 = 1
+on TIME(a.FromTime)  >=  TIME(e.timeSlot_fromTime)
+and TIME(a.ToTime)  <=  TIME(e.timeSlot_toTime)
 order by ServiceDate";
 
         public const string OtherServiceSQL = @"WITH RECURSIVE date_series AS (

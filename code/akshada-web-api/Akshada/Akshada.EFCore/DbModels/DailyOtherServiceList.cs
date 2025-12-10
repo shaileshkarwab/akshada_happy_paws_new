@@ -35,5 +35,8 @@ namespace Akshada.EFCore.DbModels
 
         public string? ServiceOfferedRowId { get; set; }
 
+        public string? TimeSlot { get; set; }
+        public string? TimeSlotId { get; set; }
+
     }
 }

@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -65,7 +66,9 @@ namespace Akshada.Services.Services
         {
             var userID = Convert.ToInt32(this.httpContextAccessor.HttpContext.Items["USER_ID"]);
             var userDetails = this.unitOfWork.UserRepository.FindFirst(c => c.Id == userID);
+            var timeSlotID = this.unitOfWork.SystemParamRepository.GetTimeSlotId();
             var dtoUser = this.mapper.Map<DTO_UserDetail>(userDetails);
+            dtoUser.TimeSlot = this.mapper.Map<DTO_LookUp>(timeSlotID);
             return dtoUser;
         }
 

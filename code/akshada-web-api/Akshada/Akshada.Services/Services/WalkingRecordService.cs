@@ -159,7 +159,8 @@ namespace Akshada.Services.Services
                             ImageUploadSystemId = dbImgeUploadType.Id,
                             Lattitude = img.Lattitude.HasValue? img.Lattitude.Value : 0,
                             Longitude = img.Longitude.HasValue? img.Longitude.Value : 0,
-                            Address = this._mapService.GetAddressFromLatLng(img.Lattitude, img.Longitude).Result
+                            Address = this._mapService.GetAddressFromLatLng(img.Lattitude, img.Longitude).Result,
+                            RecordTime = string.IsNullOrEmpty( img.RecordTime) ? System.DateTime.Now : DateTimeHelper.ConvertTimeStringToDate( img.RecordTime)
                         });
                     }
                 }
